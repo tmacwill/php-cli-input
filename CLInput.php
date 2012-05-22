@@ -152,8 +152,10 @@ class CLInput {
      */
     public function select($options, $prompt = '') {
         // start on a new line and hide cursor
+        $n = count($options);
         $this->offset += 2;
         ncurses_curs_set(0);
+        $this->check_bounds($n + 2);
 
         // display prompt
         if ($prompt) {
@@ -163,9 +165,7 @@ class CLInput {
         }
 
         // render initial selection menu
-        $n = count($options);
         $this->offset++;
-        $this->check_bounds($n);
         $this->render_menu($options);
 
         // loop until user presses enter or space
