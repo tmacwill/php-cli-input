@@ -1,6 +1,8 @@
 CLInput
 ---
 
+A library for more robust command-line input from CLI PHP scripts.
+
 ## Installation
 
 CLInput requires the ncurses library for PHP. It's available here http://pecl.php.net/package/ncurses or via your package manager.

@@ -97,6 +97,14 @@ class CLInput {
     }
 
     /**
+     * Print a line of text 
+     *
+     */
+    public function print($text) {
+        ncurses_mvaddstr($this->offset++, 0, $text);
+    }
+
+    /**
      * Render the selection menu, highlighting the current choice
      *
      * @param $options Array of options to be displayed in the menu
@@ -129,7 +137,7 @@ class CLInput {
      */
     public function select($options, $prompt = '') {
         // start on a new line and hide cursor
-        $this->offset++;
+        $this->offset += 2;
         ncurses_curs_set(0);
 
         // display prompt
