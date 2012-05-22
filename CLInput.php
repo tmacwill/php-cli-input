@@ -37,6 +37,20 @@ class CLInput {
     }
 
     /**
+     * Make sure that a given number of lines will fit on the screen and claer if not
+     *
+     * @param $required_lines Number of lines that will be displayed
+     *
+     */
+    private function check_bounds($required_lines = 1) {
+        ncurses_getmaxyx($this->window, $y, $x);
+        if ($this->offset >= $y - $required_lines) {
+            $this->offset = 0;
+            ncurses_clear();
+        }
+    }
+
+    /**
      * Finish getting input from the user
      * THIS ABSOLUTELY MUST BE CALLED AT SOME POINT BEFORE YOUR PROGRAM TERMINATES
      * SERIOUSLY
@@ -100,7 +114,8 @@ class CLInput {
      * Print a line of text 
      *
      */
-    public function print($text) {
+    public function println($text) {
+        $this->check_bounds();
         ncurses_mvaddstr($this->offset++, 0, $text);
     }
 
@@ -150,6 +165,7 @@ class CLInput {
         // render initial selection menu
         $n = count($options);
         $this->offset++;
+        $this->check_bounds($n);
         $this->render_menu($options);
 
         // loop until user presses enter or space
@@ -202,6 +218,7 @@ class CLInput {
             // start on a new line
             $result = '';
             $this->offset++;
+            $this->check_bounds();
 
             // display error message if user's input failed to validate
             if ($attempted)

@@ -5,6 +5,9 @@ require_once 'CLInput.php';
 // create a new input object
 $input = new CLInput('CLInput demo', 'Press Ctrl-C to quit');
 
+// display some text
+$input->println('Get ready for awesome.');
+
 // prompt for an email
 $email = $input->email();
 
