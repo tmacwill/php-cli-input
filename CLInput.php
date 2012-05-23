@@ -127,20 +127,53 @@ class CLInput {
      *
      */
     private function render_menu($options, $selected_index = 0) {
-        // iterate through options in menu
+        // determine how many options to display
         $n = count($options);
+        $start = 0;
+
+        // if menu is too large for the screen, then only display items that will fit
+        ncurses_getmaxyx($this->window, $y, $x);
+        if ($y < ($n + 2)) {
+            // number of choices to be displayed is the screen hight minus the title offset
+            $n = $y - 2;
+
+            // start is a screen height away from the selection plus 3 for 1-indexing and height of selection prompt
+            $start = $selected_index - $y + 3;
+            if ($start < 0)
+                $start = 0;
+        }
+
+        // display menu options
         for ($i = 0; $i < $n; $i++) {
+            // index into options array depends on the current scroll position
+            $index = $i + $start;
+
+            // determine difference between length of option and terminal width
+            $display_string = $options[$index];
+            $padding = $x - strlen($options[$index]);
+
+            // string is smaller than terminal, so pad with spaces
+            if ($padding > 0)
+                for ($j = 0; $j < $padding; $j++)
+                    $display_string .= ' ';
+
+            // string is larger than terminal, so cut off with ellipsis
+            else if ($padding < 0)
+                $display_string = substr($display_string, 0, $x - 3) . '...';
+
             // highlight current option
-            if ($i == $selected_index) {
+            if ($index == $selected_index) {
                 ncurses_attron(NCURSES_A_REVERSE);
-                ncurses_mvaddstr($i + $this->offset, 0, $options[$i]);
+                ncurses_mvaddstr($i + $this->offset, 0, $display_string);
                 ncurses_attroff(NCURSES_A_REVERSE);
             }
 
             // if not highlighted, display normally
             else
-                ncurses_mvaddstr($i + $this->offset, 0, $options[$i]);
+                ncurses_mvaddstr($i + $this->offset, 0, $display_string);
         }
+
+        ncurses_refresh();
     }
 
     /**
@@ -150,7 +183,7 @@ class CLInput {
      * @param $prompt Text to display above the menu
      *
      */
-    public function select($options, $prompt = '') {
+    public function select($options, $prompt = 'Select an option') {
         // start on a new line and hide cursor
         $n = count($options);
         $this->offset += 2;
