@@ -57,7 +57,9 @@ class CLInput {
      *
      */
     public function done() {
+        ncurses_refresh();
         ncurses_end();
+        usleep(300000);
     }
 
     /**
