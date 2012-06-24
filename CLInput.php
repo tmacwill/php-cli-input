@@ -265,12 +265,18 @@ class CLInput {
 
             // loop until user presses enter
             $index = strlen($prompt);
+            $prompt_length = $index;
             while (!in_array($key = ncurses_getch(), array(13, 10))) {
                 // backspace, so remove last character from result and display
                 if ($key == NCURSES_KEY_BACKSPACE) {
-                    $result = substr($result, 0, -1);
-                    ncurses_mvaddstr($this->offset, --$index, ' ');
-                    ncurses_mvaddstr($this->offset, $index, '');
+                    if ($index <= $prompt_length) 
+                        ncurses_mvaddstr($this->offset, $index, '');
+
+                    else {
+                        $result = substr($result, 0, -1);
+                        ncurses_mvaddstr($this->offset, --$index, ' ');
+                        ncurses_mvaddstr($this->offset, $index, '');
+                    }
                 }
 
                 // character, so display and add to result
